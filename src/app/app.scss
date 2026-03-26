@@ -1,0 +1,70 @@
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.app-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 52px;
+  background: #16213e;
+  border-bottom: 1px solid #0f3460;
+  flex-shrink: 0;
+  -webkit-app-region: drag; // Allow window dragging from nav bar
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    -webkit-app-region: drag;
+  }
+
+  .nav-icon {
+    font-size: 1.2rem;
+  }
+
+  .nav-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #e94560;
+    letter-spacing: 0.03em;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 0.25rem;
+    -webkit-app-region: no-drag;
+  }
+
+  .nav-link {
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    color: #8899b5;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s, background 0.2s;
+
+    &:hover {
+      color: #e0e0e0;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    &.active {
+      color: #e94560;
+      background: rgba(233, 69, 96, 0.1);
+    }
+  }
+}
+
+.app-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}

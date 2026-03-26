@@ -1,0 +1,62 @@
+<div class="boss-search">
+  <h2 class="section-title">{{ t('boss-search.title') }}</h2>
+
+  <div class="search-row">
+    <div class="autocomplete-wrapper">
+      <input
+        class="input"
+        type="text"
+        [placeholder]="t('boss-search.search-placeholder')"
+        [value]="query()"
+        (input)="onQueryInput($any($event.target).value)"
+        (blur)="closeDropdown()"
+        autocomplete="off"
+      />
+      @if (showDropdown() && searchResults().length > 0) {
+        <ul class="dropdown">
+          @for (boss of searchResults(); track boss.ID) {
+            <li class="dropdown-item" (mousedown)="selectBoss(boss)">
+              <span class="boss-name">{{ boss.bossName }}</span>
+              <span class="boss-meta">
+                {{ boss.location }} &bull; {{ respawnRange(boss) }}
+              </span>
+              @if (boss.alias.length > 0) {
+                <span class="boss-alias">{{ boss.alias.join(', ') }}</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </div>
+
+    <input
+      class="input input--time"
+      type="text"
+      [placeholder]="t('boss-search.death-time-placeholder')"
+      [value]="deathTime()"
+      (input)="onDeathTimeInput($any($event.target).value)"
+      maxlength="5"
+    />
+
+    <button
+      class="btn btn--add"
+      [disabled]="!selectedBoss()"
+      (click)="submit()"
+    >
+      {{ t('boss-search.add-btn') }}
+    </button>
+  </div>
+
+  @if (timeError()) {
+    <p class="error-msg">{{ timeError() }}</p>
+  }
+
+  @if (selectedBoss()) {
+    <div class="selected-preview">
+      <span class="preview-label">{{ t('boss-search.selected-label') }}</span>
+      <span class="preview-name">{{ selectedBoss()!.bossName }}</span>
+      <span class="preview-loc">{{ selectedBoss()!.location }}</span>
+      <span class="preview-respawn">{{ t('boss-search.respawn-label') }} {{ respawnRange(selectedBoss()!) }}</span>
+    </div>
+  }
+</div>

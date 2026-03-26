@@ -1,0 +1,46 @@
+<div class="timer-list">
+  <div class="list-header">
+    <h2 class="section-title">{{ t('timer-list.title') }}</h2>
+    @if (displayEntries().length > 0) {
+      <button class="btn btn--clear-all" (click)="clearAll()">{{ t('timer-list.clear-all') }}</button>
+    }
+  </div>
+
+  @if (displayEntries().length === 0) {
+    <div class="empty-state">
+      <p>{{ t('timer-list.empty') }}</p>
+      <p class="empty-hint">{{ t('timer-list.empty-hint') }}</p>
+    </div>
+  } @else {
+    <ul class="entries">
+      @for (entry of displayEntries(); track entry.raw.id) {
+        <li class="entry"
+            [class.entry--warning]="entry.status === 'warning'"
+            [class.entry--ready]="entry.status === 'ready'">
+          <div class="entry-main">
+            <div class="entry-name">{{ entry.raw.boss.bossName }}</div>
+            <div class="entry-location">{{ entry.raw.boss.location }}</div>
+          </div>
+
+          <div class="entry-times">
+            <div class="time-label">{{ t('timer-list.respawn-label') }}</div>
+            <div class="time-range">{{ entry.minTime }} – {{ entry.maxTime }}</div>
+          </div>
+
+          <div class="entry-countdown"
+               [class.countdown--warning]="entry.status === 'warning'"
+               [class.countdown--ready]="entry.status === 'ready'">
+            <div class="countdown-value">{{ entry.countdown }}</div>
+            @if (entry.status !== 'ready') {
+              <div class="countdown-label">{{ t('timer-list.remaining') }}</div>
+            }
+          </div>
+
+          <button class="btn btn--remove" (click)="clear(entry.raw.id)" [title]="t('timer-list.remove-title')">
+            ✕
+          </button>
+        </li>
+      }
+    </ul>
+  }
+</div>

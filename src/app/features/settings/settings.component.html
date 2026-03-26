@@ -1,0 +1,90 @@
+<div class="settings">
+  <h2 class="section-title">{{ t('settings.title') }}</h2>
+
+  <div class="settings-group">
+    <label class="setting-label" for="serverTz">
+      {{ t('settings.server-tz-label') }}
+      <span class="setting-hint">{{ t('settings.server-tz-hint') }}</span>
+    </label>
+    <div class="setting-row">
+      <select
+        id="serverTz"
+        class="select"
+        [value]="serverTimezone()"
+        (change)="onServerTimezoneChange($any($event.target).value)"
+      >
+        @for (tz of timezones; track tz.value) {
+          <option [value]="tz.value" [selected]="tz.value === serverTimezone()">
+            {{ tz.label }}
+          </option>
+        }
+      </select>
+      <div class="time-preview">
+        <span class="preview-label">{{ t('settings.now-label') }}</span>
+        <span class="preview-time">{{ serverTimePreview() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <label class="setting-label" for="displayTz">
+      {{ t('settings.display-tz-label') }}
+      <span class="setting-hint">{{ t('settings.display-tz-hint') }}</span>
+    </label>
+    <div class="setting-row">
+      <select
+        id="displayTz"
+        class="select"
+        [value]="displayTimezone()"
+        (change)="onDisplayTimezoneChange($any($event.target).value)"
+      >
+        @for (tz of timezones; track tz.value) {
+          <option [value]="tz.value" [selected]="tz.value === displayTimezone()">
+            {{ tz.label }}
+          </option>
+        }
+      </select>
+      <div class="time-preview">
+        <span class="preview-label">{{ t('settings.now-label') }}</span>
+        <span class="preview-time">{{ displayTimePreview() }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <label class="setting-label">
+      {{ t('settings.audio-label') }}
+      <span class="setting-hint">{{ t('settings.audio-hint') }}</span>
+    </label>
+    <div class="setting-row audio-row">
+      <span class="audio-filename">{{ audioLabel() }}</span>
+      @if (isElectron) {
+        <button class="btn btn--pick" (click)="pickAudio()">{{ t('settings.pick-audio') }}</button>
+        @if (customAudioPath()) {
+          <button class="btn btn--reset" (click)="resetAudio()">{{ t('settings.reset-audio') }}</button>
+        }
+      }
+    </div>
+    <div class="setting-hint audio-formats-hint">
+      {{ t('settings.audio-formats') }}
+    </div>
+  </div>
+
+  <div class="settings-group">
+    <label class="setting-label">{{ t('settings.language-label') }}</label>
+    <div class="setting-row locale-row">
+      <button
+        class="btn btn--locale"
+        [class.btn--locale-active]="currentLocale() === 'en'"
+        (click)="onLocaleChange('en')"
+      >EN</button>
+      <button
+        class="btn btn--locale"
+        [class.btn--locale-active]="currentLocale() === 'es'"
+        (click)="onLocaleChange('es')"
+      >ES</button>
+    </div>
+  </div>
+
+  <div class="info-box" [innerHTML]="t('settings.info-example')"></div>
+</div>
