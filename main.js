@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Notification, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Notification, dialog, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -95,6 +95,12 @@ ipcMain.handle('dialog:pickAudio', async () => {
     properties: ['openFile'],
   });
   return result.canceled || result.filePaths.length === 0 ? null : result.filePaths[0];
+});
+
+// ── IPC: shell:openExternal (Ko-Fi donation link) ────────────────────────────
+// URL is hardcoded here — the renderer passes no URL argument.
+ipcMain.handle('shell:openExternal', () => {
+  shell.openExternal('https://ko-fi.com/sarjador');
 });
 
 // ── IPC: notification:send ───────────────────────────────────────────────────

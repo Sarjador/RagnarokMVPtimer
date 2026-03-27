@@ -4,6 +4,13 @@ export type TranslationKey =
   // Nav
   | 'nav.timers'
   | 'nav.settings'
+  | 'nav.catalog'
+  | 'nav.active-timers'
+  // Catalog
+  | 'catalog.search-placeholder'
+  | 'catalog.empty'
+  | 'catalog.track'
+  | 'catalog.respawn-range'
   // Boss search
   | 'boss-search.title'
   | 'boss-search.search-placeholder'
@@ -42,12 +49,23 @@ export type TranslationKey =
   | 'notif.ready-title'
   | 'notif.ready-body'
   // Audio label
-  | 'audio-label.default';
+  | 'audio-label.default'
+  // Footer
+  | 'footer.support-text'
+  | 'footer.kofi-link';
 
 export const TRANSLATIONS: Record<TranslationKey, Record<Locale, string>> = {
   // Nav
-  'nav.timers':   { en: 'Timers',        es: 'Timers' },
-  'nav.settings': { en: 'Settings',      es: 'Configuración' },
+  'nav.timers':        { en: 'Timers',        es: 'Timers' },
+  'nav.settings':      { en: 'Settings',      es: 'Configuración' },
+  'nav.catalog':       { en: 'Catalog',       es: 'Catálogo' },
+  'nav.active-timers': { en: 'Active Timers', es: 'Timers Activos' },
+
+  // Catalog
+  'catalog.search-placeholder': { en: 'Filter MVPs…',         es: 'Filtrar MVPs…' },
+  'catalog.empty':              { en: 'No MVPs found',         es: 'No se encontraron MVPs' },
+  'catalog.track':              { en: 'Track',                 es: 'Trackear' },
+  'catalog.respawn-range':      { en: '{min}m – {max}m',       es: '{min}m – {max}m' },
 
   // Boss search
   'boss-search.title':                 { en: 'Add MVP',                                    es: 'Agregar MVP' },
@@ -91,5 +109,9 @@ export const TRANSLATIONS: Record<TranslationKey, Record<Locale, string>> = {
   'notif.ready-body':    { en: 'Loc: {location} | Since: {min}',         es: 'Loc: {location} | Desde: {min}' },
 
   // Audio label
-  'audio-label.default': { en: 'Default (Murloc)', es: 'Por defecto (Murloc)' },
+  'audio-label.default': { en: 'Default', es: 'Por defecto' },
+
+  // Footer
+  'footer.support-text': { en: 'Enjoying the app? Consider supporting development!', es: '¿Te gusta la app? ¡Considera apoyar el desarrollo!' },
+  'footer.kofi-link':    { en: 'Buy me a coffee ☕',                                  es: 'Invítame un café ☕' },
 };

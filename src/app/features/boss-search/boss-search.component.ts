@@ -1,5 +1,5 @@
 import {
-  Component, computed, signal, inject, ChangeDetectionStrategy,
+  Component, computed, signal, inject, ChangeDetectionStrategy, ViewChild, ElementRef,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BossEntry } from '../../core/models/boss.model';
@@ -17,6 +17,8 @@ import { isValidTimeFormat } from '../../core/utils/time-utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BossSearchComponent {
+  @ViewChild('deathTimeInput') private deathTimeInputRef?: ElementRef<HTMLInputElement>;
+
   private readonly catalog = inject(BossCatalogService);
   private readonly timerService = inject(MvpTimerService);
   readonly locale = inject(LocaleService);
@@ -72,6 +74,12 @@ export class BossSearchComponent {
     } catch (err: unknown) {
       this.timeError.set(err instanceof Error ? err.message : this.locale.t('boss-search.error-generic'));
     }
+  }
+
+  prefillBoss(boss: BossEntry): void {
+    this.selectBoss(boss);
+    this.timeError.set('');
+    setTimeout(() => this.deathTimeInputRef?.nativeElement.focus(), 50);
   }
 
   closeDropdown(): void {

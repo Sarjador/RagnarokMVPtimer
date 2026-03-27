@@ -1,0 +1,21 @@
+<div class="mvp-catalog">
+  <div class="catalog-search">
+    <input
+      class="catalog-search-input"
+      type="text"
+      [placeholder]="t('catalog.search-placeholder')"
+      [ngModel]="filterQuery()"
+      (ngModelChange)="onFilterInput($event)"
+    />
+  </div>
+
+  @if (filteredBosses().length > 0) {
+    <div class="catalog-grid">
+      @for (boss of filteredBosses(); track boss.ID) {
+        <app-boss-card [boss]="boss" (select)="onBossCardSelect($event)" />
+      }
+    </div>
+  } @else {
+    <div class="catalog-empty">{{ t('catalog.empty') }}</div>
+  }
+</div>

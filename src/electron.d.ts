@@ -5,6 +5,8 @@ interface ElectronAPI {
   sendNotification(opts: { title: string; body: string; silent?: boolean }): Promise<void>;
   /** Opens the OS native file-open dialog filtered to audio formats. Returns absolute path or null if cancelled. */
   pickAudioFile(): Promise<string | null>;
+  /** Opens the Ko-Fi donation page in the system default browser. */
+  openExternal(): Promise<void>;
 }
 
 interface Window {

@@ -1,4 +1,33 @@
 <div class="timers-page">
-  <app-boss-search />
-  <app-timer-list />
+  <nav class="tab-bar">
+    <button
+      class="tab-btn"
+      [class.tab-btn--active]="activeTab() === 'catalog'"
+      (click)="setTab('catalog')"
+      type="button"
+    >
+      {{ t('nav.catalog') }}
+    </button>
+    <button
+      class="tab-btn"
+      [class.tab-btn--active]="activeTab() === 'active'"
+      (click)="setTab('active')"
+      type="button"
+    >
+      {{ t('nav.active-timers') }}
+    </button>
+  </nav>
+
+  @if (activeTab() === 'catalog') {
+    <div class="tab-panel">
+      <app-mvp-catalog (bossSelected)="onBossSelected($event)" />
+    </div>
+  }
+
+  @if (activeTab() === 'active') {
+    <div class="tab-panel">
+      <app-boss-search />
+      <app-timer-list />
+    </div>
+  }
 </div>

@@ -1,0 +1,20 @@
+<div class="boss-card" (click)="onSelect()" role="button" [attr.aria-label]="boss().bossName">
+  <div class="card-image">
+    <img
+      [src]="boss().imageUrl || placeholderUrl"
+      [alt]="boss().bossName"
+      (error)="onImgError($event)"
+    />
+  </div>
+  <div class="card-body">
+    <span class="card-name">{{ boss().bossName }}</span>
+    <div class="card-badges">
+      <span class="badge badge--property">{{ boss().property }}</span>
+      <span class="badge badge--race">{{ boss().race }}</span>
+    </div>
+    <span class="card-respawn">{{ respawnRange() }}</span>
+  </div>
+  <button class="card-track-btn" (click)="$event.stopPropagation(); onSelect()" type="button">
+    {{ t('catalog.track') }}
+  </button>
+</div>

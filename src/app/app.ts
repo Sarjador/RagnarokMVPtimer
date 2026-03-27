@@ -21,4 +21,12 @@ export class App implements OnInit {
   ngOnInit(): void {
     // NotificationService is initialized via injection; nothing else needed here.
   }
+
+  openKoFi(): void {
+    if (window.electronAPI) {
+      window.electronAPI.openExternal();
+    } else {
+      window.open('https://ko-fi.com/sarjador', '_blank');
+    }
+  }
 }

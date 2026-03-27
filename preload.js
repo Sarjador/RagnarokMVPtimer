@@ -12,4 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   /** Open the OS native file-open dialog filtered to audio formats; returns absolute path or null */
   pickAudioFile: () => ipcRenderer.invoke('dialog:pickAudio'),
+
+  /** Open the Ko-Fi donation page in the system default browser */
+  openExternal: () => ipcRenderer.invoke('shell:openExternal'),
 });

@@ -1,5 +1,42 @@
 .timers-page {
   display: flex;
   flex-direction: column;
+  gap: 0;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #1a2e5a;
+  margin-bottom: 0;
+}
+
+.tab-btn {
+  padding: 0.6rem 1.4rem;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  color: #6b7b99;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  letter-spacing: 0.03em;
+
+  &:hover {
+    color: #c0cfe8;
+  }
+
+  &--active {
+    color: #e94560;
+    border-bottom-color: #e94560;
+  }
+}
+
+.tab-panel {
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
+  padding-top: 1rem;
 }
