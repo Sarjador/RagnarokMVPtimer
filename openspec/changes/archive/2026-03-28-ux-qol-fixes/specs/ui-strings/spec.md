@@ -1,4 +1,4 @@
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: All user-visible strings use the translation system
 Every hardcoded string in HTML templates and TypeScript files SHALL be replaced with a `t('key')` call using the `LocaleService`. No Spanish-only or English-only literals SHALL remain in production code. This includes the custom-boss catalog UI (add button, form title, field labels, action buttons).
@@ -18,6 +18,8 @@ The Settings page SHALL display a language selector (EN / ES) that immediately a
 - **WHEN** the user selects "Español" in Settings
 - **THEN** all visible labels switch to Spanish immediately (no page reload)
 - **AND** the preference is persisted
+
+## ADDED Requirements
 
 ### Requirement: Custom-boss UI strings are fully translated
 The catalog's add-custom-boss button, the add-boss form title, field labels, placeholder hints, and action buttons SHALL all have translation entries for `'en'` and `'es'` under the `catalog.*` namespace and SHALL be rendered via `t()`.

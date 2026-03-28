@@ -81,6 +81,12 @@ export class MvpTimerService implements OnDestroy {
     this.persist();
   }
 
+  /** Removes all tracker entries whose boss matches the given boss ID. */
+  clearByBossId(bossId: number): void {
+    this._entries.update((prev) => prev.filter((e) => e.boss.ID !== bossId));
+    this.persist();
+  }
+
   startLoop(): void {
     if (this.intervalId !== null) return; // prevent double-start
     this.intervalId = setInterval(() => {

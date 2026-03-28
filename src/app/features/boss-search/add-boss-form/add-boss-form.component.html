@@ -1,0 +1,85 @@
+<div class="add-boss-form" [formGroup]="form">
+  <h3 class="form-title">{{ t('catalog.form.title') }}</h3>
+
+  <div class="form-grid">
+    <!-- Boss Name (required) -->
+    <div class="field field--full">
+      <label class="label" for="abf-name">{{ t('catalog.form.name-label') }} <span class="required">*</span></label>
+      <input id="abf-name" class="input" type="text" formControlName="bossName"
+             placeholder="e.g. Bio MVP" [class.input--error]="nameInvalid" />
+      @if (nameInvalid) {
+        <span class="field-error">Name is required.</span>
+      }
+    </div>
+
+    <!-- Min Respawn (required) -->
+    <div class="field">
+      <label class="label" for="abf-min">{{ t('catalog.form.min-respawn-label') }} <span class="required">*</span></label>
+      <input id="abf-min" class="input" type="number" formControlName="minRespawnMin"
+             placeholder="60" min="1" [class.input--error]="minInvalid" />
+      @if (minInvalid) {
+        <span class="field-error">Must be a positive number.</span>
+      }
+    </div>
+
+    <!-- Max Respawn (required) -->
+    <div class="field">
+      <label class="label" for="abf-max">{{ t('catalog.form.max-respawn-label') }} <span class="required">*</span></label>
+      <input id="abf-max" class="input" type="number" formControlName="maxRespawnMin"
+             placeholder="70" min="1" [class.input--error]="maxInvalid" />
+      @if (maxInvalid) {
+        <span class="field-error">
+          @if (form.hasError('maxLessThanMin')) { Max must be ≥ min. }
+          @else { Must be a positive number. }
+        </span>
+      }
+    </div>
+
+    <!-- HP (optional) -->
+    <div class="field">
+      <label class="label" for="abf-hp">{{ t('catalog.form.hp-label') }}</label>
+      <input id="abf-hp" class="input" type="number" formControlName="HP"
+             placeholder="0" min="0" />
+    </div>
+
+    <!-- Location (optional) -->
+    <div class="field">
+      <label class="label" for="abf-loc">{{ t('catalog.form.location-label') }}</label>
+      <input id="abf-loc" class="input" type="text" formControlName="location"
+             placeholder="e.g. ein_dun02" />
+    </div>
+
+    <!-- Race (optional) -->
+    <div class="field">
+      <label class="label" for="abf-race">{{ t('catalog.form.race-label') }}</label>
+      <input id="abf-race" class="input" type="text" formControlName="race"
+             placeholder="e.g. Demi-Human" />
+    </div>
+
+    <!-- Property (optional) -->
+    <div class="field">
+      <label class="label" for="abf-prop">{{ t('catalog.form.property-label') }}</label>
+      <input id="abf-prop" class="input" type="text" formControlName="property"
+             placeholder="e.g. Dark 3" />
+    </div>
+
+    <!-- Image URL (optional) -->
+    <div class="field field--full">
+      <label class="label" for="abf-img">{{ t('catalog.form.image-url-label') }}</label>
+      <input id="abf-img" class="input" type="url" formControlName="imageUrl"
+             placeholder="https://…" />
+    </div>
+
+    <!-- Alias (optional) -->
+    <div class="field field--full">
+      <label class="label" for="abf-alias">{{ t('catalog.form.alias-label') }} <span class="hint">({{ t('catalog.form.alias-hint') }})</span></label>
+      <input id="abf-alias" class="input" type="text" formControlName="alias"
+             placeholder="e.g. Bio, Custom Boss" />
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="button" class="btn btn--cancel" (click)="cancel()">{{ t('catalog.form.cancel-btn') }}</button>
+    <button type="button" class="btn btn--save" (click)="submit()">{{ t('catalog.form.add-btn') }}</button>
+  </div>
+</div>

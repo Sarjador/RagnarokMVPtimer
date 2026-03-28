@@ -38,12 +38,14 @@ export class SettingsComponent {
     return path.replace(/.*[\\/]/, '');
   });
 
-  readonly serverTimePreview = computed(() =>
-    getCurrentTimeInTimezone(this.appSettings.serverTimezone(), 'HH:mm:ss'),
-  );
-  readonly displayTimePreview = computed(() =>
-    getCurrentTimeInTimezone(this.appSettings.displayTimezone(), 'HH:mm:ss'),
-  );
+  readonly serverTimePreview = computed(() => {
+    void this.timerService.currentTimeMs();
+    return getCurrentTimeInTimezone(this.appSettings.serverTimezone(), 'HH:mm:ss');
+  });
+  readonly displayTimePreview = computed(() => {
+    void this.timerService.currentTimeMs();
+    return getCurrentTimeInTimezone(this.appSettings.displayTimezone(), 'HH:mm:ss');
+  });
 
   onServerTimezoneChange(tz: string): void {
     this.appSettings.setServerTimezone(tz);

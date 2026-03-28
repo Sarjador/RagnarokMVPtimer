@@ -1,22 +1,20 @@
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Locale, TranslationKey, TRANSLATIONS } from '../i18n/translations';
 import { AppSettingsService } from './app-settings.service';
 
 @Injectable({ providedIn: 'root' })
 export class LocaleService {
   private readonly appSettings = inject(AppSettingsService);
-  private readonly _locale = signal<Locale>(this.appSettings.locale());
 
-  readonly locale = this._locale.asReadonly();
+  readonly locale = this.appSettings.locale;
 
   setLocale(locale: Locale): void {
-    this._locale.set(locale);
     this.appSettings.setLocale(locale);
   }
 
   /** Returns the translated string for the current locale. Falls back to the key if missing. */
   t(key: TranslationKey): string {
-    return TRANSLATIONS[key]?.[this._locale()] ?? key;
+    return TRANSLATIONS[key]?.[this.appSettings.locale()] ?? key;
   }
 
   /**

@@ -15,4 +15,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   /** Open the Ko-Fi donation page in the system default browser */
   openExternal: () => ipcRenderer.invoke('shell:openExternal'),
+
+  /** Read user-created custom bosses from userData/customBosses.json; returns null if not found */
+  customBossesRead: () => ipcRenderer.invoke('custom-bosses:read'),
+
+  /** Atomically write user-created custom bosses to userData/customBosses.json */
+  customBossesWrite: (data) => ipcRenderer.invoke('custom-bosses:write', data),
 });

@@ -71,10 +71,12 @@
 
   .dropdown-item {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: stretch;
     padding: 0.55rem 0.9rem;
     cursor: pointer;
     transition: background 0.15s;
+    gap: 0.5rem;
 
     &:hover {
       background: #0f3460;
@@ -127,6 +129,85 @@
     margin: 0.5rem 0 0;
     color: #ff6b6b;
     font-size: 0.85rem;
+  }
+
+  // ── Dropdown: custom boss extras ──────────────────────────────────────────
+
+  .dropdown-item-main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 4px;
+    align-self: flex-start;
+    margin-bottom: 2px;
+
+    &--custom {
+      background: #1a3a2a;
+      color: #4caf7a;
+      border: 1px solid #2a5a3a;
+    }
+  }
+
+  .btn-delete-inline {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0 0.3rem;
+    opacity: 0.5;
+    transition: opacity 0.15s;
+    line-height: 1;
+    align-self: center;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  // ── Add Custom Boss card ───────────────────────────────────────────────────
+
+  .add-custom-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.65rem 1rem;
+    background: transparent;
+    border: 2px dashed #0f3460;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #6b7b99;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: border-color 0.2s, color 0.2s;
+
+    &:hover {
+      border-color: #e94560;
+      color: #e94560;
+    }
+  }
+
+  .add-custom-icon {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .add-custom-label {
+    letter-spacing: 0.03em;
   }
 
   .selected-preview {

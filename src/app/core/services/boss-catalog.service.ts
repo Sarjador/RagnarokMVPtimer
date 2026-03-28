@@ -1,18 +1,29 @@
-import { Injectable, signal, computed } from '@angular/core';
-import { BossEntry } from '../models/boss.model';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { BossEntry, CustomBossListJson } from '../models/boss.model';
+import { StorageService } from './storage.service';
 
 interface BossListJson {
   bosses: BossEntry[];
 }
 
+const CUSTOM_BOSS_ID_START = 900_000;
+
 @Injectable({ providedIn: 'root' })
 export class BossCatalogService {
+  private readonly storage = inject(StorageService);
+
   private readonly _bosses = signal<BossEntry[]>([]);
   private readonly _loaded = signal(false);
+  private _customData: CustomBossListJson = { nextCustomId: CUSTOM_BOSS_ID_START, bosses: [] };
 
-  /** All bosses from the catalog. Empty until catalog is loaded. */
+  /** All bosses (standard + custom) from the catalog. Empty until catalog is loaded. */
   readonly bosses = this._bosses.asReadonly();
   readonly loaded = this._loaded.asReadonly();
+
+  /** Set of IDs belonging to user-created custom bosses */
+  readonly customBossIds = computed(
+    () => new Set(this._bosses().filter((b) => b.isCustom).map((b) => b.ID)),
+  );
 
   constructor() {
     this.loadCatalog();
@@ -20,21 +31,38 @@ export class BossCatalogService {
 
   private async loadCatalog(): Promise<void> {
     try {
-      const response = await fetch('./data/bossList.json');
-      const data: BossListJson = await response.json();
-      // Strip runtime-state fields; keep only static boss info
-      const entries = data.bosses.map(({ ID, bossName, HP, race, property, location,
-        minRespawnTimeScheduleInSeconds, maxRespawnTimeScheduleInSeconds,
-        imageUrl, alias }) => ({
-        ID, bossName, HP, race, property, location,
-        minRespawnTimeScheduleInSeconds, maxRespawnTimeScheduleInSeconds,
-        imageUrl, alias: alias ?? [],
-      }));
-      this._bosses.set(entries);
+      const [standardEntries, customData] = await Promise.all([
+        this.loadStandard(),
+        this.loadCustom(),
+      ]);
+      this._customData = customData;
+      this._bosses.set([
+        ...standardEntries,
+        ...customData.bosses.map((b) => ({ ...b, isCustom: true as const })),
+      ]);
       this._loaded.set(true);
     } catch (err) {
       console.error('[BossCatalogService] Failed to load boss catalog:', err);
     }
+  }
+
+  private async loadStandard(): Promise<BossEntry[]> {
+    const response = await fetch('./data/bossList.json');
+    const data: BossListJson = await response.json();
+    return data.bosses.map(({ ID, bossName, HP, race, property, location,
+      minRespawnTimeScheduleInSeconds, maxRespawnTimeScheduleInSeconds,
+      imageUrl, alias }) => ({
+      ID, bossName, HP, race, property, location,
+      minRespawnTimeScheduleInSeconds, maxRespawnTimeScheduleInSeconds,
+      imageUrl, alias: alias ?? [],
+      isCustom: false,
+    }));
+  }
+
+  private async loadCustom(): Promise<CustomBossListJson> {
+    const data = await this.storage.readCustomBosses();
+    if (!data) return { nextCustomId: CUSTOM_BOSS_ID_START, bosses: [] };
+    return data;
   }
 
   /**
@@ -54,5 +82,35 @@ export class BossCatalogService {
   /** Returns the boss with the given ID, or undefined. */
   findById(id: number): BossEntry | undefined {
     return this._bosses().find((b) => b.ID === id);
+  }
+
+  /** Adds a new user-defined boss to the custom catalog and persists it. */
+  addCustomBoss(partial: Omit<BossEntry, 'ID' | 'isCustom'>): void {
+    const id = this._customData.nextCustomId;
+    const newEntry: BossEntry = { ...partial, ID: id, isCustom: true };
+    const { isCustom: _ignored, ...persistEntry } = { ...partial, ID: id, isCustom: true };
+
+    this._customData = {
+      nextCustomId: id + 1,
+      bosses: [...this._customData.bosses, persistEntry],
+    };
+    this._bosses.update((prev) => [...prev, newEntry]);
+    this.storage.writeCustomBosses(this._customData);
+  }
+
+  /**
+   * Removes a user-defined boss by ID.
+   * No-op if the ID belongs to a standard (non-custom) boss.
+   * The caller is responsible for clearing active timers (see BossSearchComponent).
+   */
+  deleteCustomBoss(id: number): void {
+    if (!this.customBossIds().has(id)) return;
+
+    this._customData = {
+      ...this._customData,
+      bosses: this._customData.bosses.filter((b) => b.ID !== id),
+    };
+    this._bosses.update((prev) => prev.filter((b) => b.ID !== id));
+    this.storage.writeCustomBosses(this._customData);
   }
 }

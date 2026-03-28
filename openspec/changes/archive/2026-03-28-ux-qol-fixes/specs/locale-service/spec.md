@@ -1,4 +1,4 @@
-## Requirements
+## MODIFIED Requirements
 
 ### Requirement: LocaleService provides runtime translation lookup
 The system SHALL provide a `LocaleService` singleton with a `t(key: TranslationKey): string` method that returns the translated string for the current locale. If a key is missing from the dictionary, the method SHALL return the key itself as a fallback (no blank UI).
@@ -24,7 +24,7 @@ The system SHALL allow the active locale to be changed via `setLocale(locale)`. 
 - **AND** subsequent `t()` calls return Spanish strings
 
 ### Requirement: Default locale is English
-The system SHALL use `'en'` as the default locale when no persisted preference exists. `LocaleService.locale` derives from `AppSettingsService.locale` signal directly and is not initialized independently.
+The system SHALL initialize with `'en'` as the default locale when no persisted preference exists.
 
 #### Scenario: First launch, no saved locale
 - **WHEN** the app starts with no saved state

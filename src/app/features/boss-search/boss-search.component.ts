@@ -30,6 +30,7 @@ export class BossSearchComponent {
   readonly selectedBoss = signal<BossEntry | null>(null);
   readonly timeError = signal('');
   readonly showDropdown = signal(false);
+  readonly customBossIds = this.catalog.customBossIds;
 
   readonly searchResults = computed(() => {
     const q = this.query();
@@ -90,5 +91,18 @@ export class BossSearchComponent {
     const min = Math.floor(boss.minRespawnTimeScheduleInSeconds / 60);
     const max = Math.floor(boss.maxRespawnTimeScheduleInSeconds / 60);
     return min === max ? `${min} min` : `${min}–${max} min`;
+  }
+
+  deleteCustomBoss(boss: BossEntry, event: MouseEvent): void {
+    event.stopPropagation();
+    if (!boss.isCustom) return;
+    if (!confirm(`Delete custom boss "${boss.bossName}"?`)) return;
+    this.catalog.deleteCustomBoss(boss.ID);
+    this.timerService.clearByBossId(boss.ID);
+    // Clear selection if the deleted boss was selected
+    if (this.selectedBoss()?.ID === boss.ID) {
+      this.selectedBoss.set(null);
+      this.query.set('');
+    }
   }
 }

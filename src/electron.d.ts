@@ -7,6 +7,10 @@ interface ElectronAPI {
   pickAudioFile(): Promise<string | null>;
   /** Opens the Ko-Fi donation page in the system default browser. */
   openExternal(): Promise<void>;
+  /** Reads user-created custom bosses from userData/customBosses.json. Returns null if file not found. */
+  customBossesRead(): Promise<import('./app/core/models/boss.model').CustomBossListJson | null>;
+  /** Atomically writes user-created custom bosses to userData/customBosses.json. */
+  customBossesWrite(data: import('./app/core/models/boss.model').CustomBossListJson): Promise<void>;
 }
 
 interface Window {

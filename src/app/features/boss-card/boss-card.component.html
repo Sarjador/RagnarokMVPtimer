@@ -1,4 +1,4 @@
-<div class="boss-card" (click)="onSelect()" role="button" [attr.aria-label]="boss().bossName">
+<div class="boss-card" [class.boss-card--custom]="boss().isCustom" (click)="onSelect()" role="button" [attr.aria-label]="boss().bossName">
   <div class="card-image">
     <img
       [src]="boss().imageUrl || placeholderUrl"
@@ -14,6 +14,9 @@
     </div>
     <span class="card-respawn">{{ respawnRange() }}</span>
   </div>
+  @if (boss().isCustom) {
+    <button class="card-delete-btn" type="button" title="Delete custom boss" (click)="onDelete($event)">✕</button>
+  }
   <button class="card-track-btn" (click)="$event.stopPropagation(); onSelect()" type="button">
     {{ t('catalog.track') }}
   </button>

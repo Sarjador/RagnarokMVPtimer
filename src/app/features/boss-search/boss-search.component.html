@@ -16,12 +16,24 @@
         <ul class="dropdown">
           @for (boss of searchResults(); track boss.ID) {
             <li class="dropdown-item" (mousedown)="selectBoss(boss)">
-              <span class="boss-name">{{ boss.bossName }}</span>
-              <span class="boss-meta">
-                {{ boss.location }} &bull; {{ respawnRange(boss) }}
-              </span>
-              @if (boss.alias.length > 0) {
-                <span class="boss-alias">{{ boss.alias.join(', ') }}</span>
+              <div class="dropdown-item-main">
+                <span class="boss-name">{{ boss.bossName }}</span>
+                @if (boss.isCustom) {
+                  <span class="badge badge--custom">custom</span>
+                }
+                <span class="boss-meta">
+                  {{ boss.location }} &bull; {{ respawnRange(boss) }}
+                </span>
+                @if (boss.alias.length > 0) {
+                  <span class="boss-alias">{{ boss.alias.join(', ') }}</span>
+                }
+              </div>
+              @if (boss.isCustom) {
+                <button class="btn-delete-inline"
+                        title="Delete custom boss"
+                        (mousedown)="deleteCustomBoss(boss, $event)">
+                  🗑
+                </button>
               }
             </li>
           }
@@ -60,4 +72,5 @@
       <span class="preview-respawn">{{ t('boss-search.respawn-label') }} {{ respawnRange(selectedBoss()!) }}</span>
     </div>
   }
+
 </div>

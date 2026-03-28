@@ -9,13 +9,24 @@
     />
   </div>
 
-  @if (filteredBosses().length > 0) {
-    <div class="catalog-grid">
-      @for (boss of filteredBosses(); track boss.ID) {
-        <app-boss-card [boss]="boss" (select)="onBossCardSelect($event)" />
-      }
-    </div>
-  } @else {
+  <div class="catalog-grid">
+    @for (boss of filteredBosses(); track boss.ID) {
+      <app-boss-card [boss]="boss" (select)="onBossCardSelect($event)" (deleteCard)="onBossCardDelete($event)" />
+    }
+
+    @if (showAddForm()) {
+      <div #addFormAnchor class="add-form-wrapper">
+        <app-add-boss-form (saved)="onBossSaved()" (cancelled)="onFormCancelled()" />
+      </div>
+    } @else {
+      <button #addCardBtn class="add-custom-card" (click)="openAddForm()" title="Add custom boss" type="button">
+        <span class="add-custom-icon">+</span>
+        <span class="add-custom-label">{{ t('catalog.add-custom-boss') }}</span>
+      </button>
+    }
+  </div>
+
+  @if (filteredBosses().length === 0) {
     <div class="catalog-empty">{{ t('catalog.empty') }}</div>
   }
 </div>

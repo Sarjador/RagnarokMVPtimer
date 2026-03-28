@@ -17,10 +17,14 @@ if (!gotLock) {
 // ── State file path (resolved after app is ready) ────────────────────────────
 let STATE_FILE;
 let TEMP_FILE;
+let CUSTOM_BOSSES_FILE;
+let CUSTOM_BOSSES_TEMP;
 
 function resolveStatePaths() {
   STATE_FILE = path.join(app.getPath('userData'), 'mvp-state.json');
   TEMP_FILE = STATE_FILE + '.tmp';
+  CUSTOM_BOSSES_FILE = path.join(app.getPath('userData'), 'customBosses.json');
+  CUSTOM_BOSSES_TEMP = CUSTOM_BOSSES_FILE + '.tmp';
 }
 
 // ── Window ───────────────────────────────────────────────────────────────────
@@ -101,6 +105,24 @@ ipcMain.handle('dialog:pickAudio', async () => {
 // URL is hardcoded here — the renderer passes no URL argument.
 ipcMain.handle('shell:openExternal', () => {
   shell.openExternal('https://ko-fi.com/sarjador');
+});
+
+// ── IPC: custom-bosses:read ──────────────────────────────────────────────────
+ipcMain.handle('custom-bosses:read', () => {
+  try {
+    if (!fs.existsSync(CUSTOM_BOSSES_FILE)) return null;
+    const raw = fs.readFileSync(CUSTOM_BOSSES_FILE, 'utf-8');
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+});
+
+// ── IPC: custom-bosses:write (atomic write via tmp → rename) ─────────────────
+ipcMain.handle('custom-bosses:write', (_event, data) => {
+  const json = JSON.stringify(data, null, 2);
+  fs.writeFileSync(CUSTOM_BOSSES_TEMP, json, 'utf-8');
+  fs.renameSync(CUSTOM_BOSSES_TEMP, CUSTOM_BOSSES_FILE);
 });
 
 // ── IPC: notification:send ───────────────────────────────────────────────────

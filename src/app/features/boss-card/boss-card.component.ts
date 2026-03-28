@@ -12,6 +12,7 @@ import { LocaleService } from '../../core/services/locale.service';
 export class BossCardComponent {
   readonly boss = input.required<BossEntry>();
   readonly select = output<BossEntry>();
+  readonly deleteCard = output<BossEntry>();
 
   private readonly locale = inject(LocaleService);
   readonly t = this.locale.t.bind(this.locale);
@@ -32,5 +33,10 @@ export class BossCardComponent {
 
   onSelect(): void {
     this.select.emit(this.boss());
+  }
+
+  onDelete(event: MouseEvent): void {
+    event.stopPropagation();
+    this.deleteCard.emit(this.boss());
   }
 }

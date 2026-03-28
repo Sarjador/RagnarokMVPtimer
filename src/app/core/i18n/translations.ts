@@ -11,6 +11,20 @@ export type TranslationKey =
   | 'catalog.empty'
   | 'catalog.track'
   | 'catalog.respawn-range'
+  | 'catalog.add-custom-boss'
+  | 'catalog.form.title'
+  | 'catalog.form.name-label'
+  | 'catalog.form.min-respawn-label'
+  | 'catalog.form.max-respawn-label'
+  | 'catalog.form.hp-label'
+  | 'catalog.form.race-label'
+  | 'catalog.form.property-label'
+  | 'catalog.form.location-label'
+  | 'catalog.form.image-url-label'
+  | 'catalog.form.alias-label'
+  | 'catalog.form.alias-hint'
+  | 'catalog.form.add-btn'
+  | 'catalog.form.cancel-btn'
   // Boss search
   | 'boss-search.title'
   | 'boss-search.search-placeholder'
@@ -62,10 +76,26 @@ export const TRANSLATIONS: Record<TranslationKey, Record<Locale, string>> = {
   'nav.active-timers': { en: 'Active Timers', es: 'Timers Activos' },
 
   // Catalog
-  'catalog.search-placeholder': { en: 'Filter MVPs…',         es: 'Filtrar MVPs…' },
-  'catalog.empty':              { en: 'No MVPs found',         es: 'No se encontraron MVPs' },
-  'catalog.track':              { en: 'Track',                 es: 'Trackear' },
-  'catalog.respawn-range':      { en: '{min}m – {max}m',       es: '{min}m – {max}m' },
+  'catalog.search-placeholder': { en: 'Filter MVPs…',              es: 'Filtrar MVPs…' },
+  'catalog.empty':              { en: 'No MVPs found',              es: 'No se encontraron MVPs' },
+  'catalog.track':              { en: 'Track',                      es: 'Trackear' },
+  'catalog.respawn-range':      { en: '{min}m – {max}m',            es: '{min}m – {max}m' },
+  'catalog.add-custom-boss':    { en: 'Add Custom Boss',            es: 'Agregar Jefe Personalizado' },
+
+  // Catalog — add-boss form
+  'catalog.form.title':           { en: 'Add Custom Boss',          es: 'Agregar Jefe Personalizado' },
+  'catalog.form.name-label':      { en: 'Boss Name',                es: 'Nombre del Jefe' },
+  'catalog.form.min-respawn-label':{ en: 'Min Respawn (min)',        es: 'Respawn mín. (min)' },
+  'catalog.form.max-respawn-label':{ en: 'Max Respawn (min)',        es: 'Respawn máx. (min)' },
+  'catalog.form.hp-label':        { en: 'HP',                       es: 'HP' },
+  'catalog.form.race-label':      { en: 'Race',                     es: 'Raza' },
+  'catalog.form.property-label':  { en: 'Property',                 es: 'Propiedad' },
+  'catalog.form.location-label':  { en: 'Location / Map',           es: 'Ubicación / Mapa' },
+  'catalog.form.image-url-label': { en: 'Image URL',                es: 'URL de imagen' },
+  'catalog.form.alias-label':     { en: 'Aliases',                  es: 'Alias' },
+  'catalog.form.alias-hint':      { en: 'comma-separated',          es: 'separados por coma' },
+  'catalog.form.add-btn':         { en: 'Add Boss',                 es: 'Agregar Jefe' },
+  'catalog.form.cancel-btn':      { en: 'Cancel',                   es: 'Cancelar' },
 
   // Boss search
   'boss-search.title':                 { en: 'Add MVP',                                    es: 'Agregar MVP' },

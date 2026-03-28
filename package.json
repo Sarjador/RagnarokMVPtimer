@@ -11,7 +11,8 @@
     "test": "ng test",
     "electron:serve": "ng build --configuration development && electron .",
     "electron:build": "ng build --configuration production",
-    "electron:dist": "ng build --configuration production && electron-builder"
+    "electron:dist": "ng build --configuration production && electron-builder",
+    "scrape-bosses": "node scripts/scrape-bosses.js"
   },
   "build": {
     "appId": "com.romvptimer.app",
