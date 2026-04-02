@@ -90,7 +90,7 @@ When an MVP dies in-game, you register the death time and the app automatically 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-user/RagnarokMVPtimer.git
+git clone https://github.com/sarjador/RagnarokMVPtimer.git
 cd RagnarokMVPtimer
 
 # Install dependencies
@@ -239,13 +239,13 @@ Construida con **Angular 20** + **Electron 35** — funciona en Windows, macOS y
 
 ## ¿Qué hace?
 
-Cuando un MVP muere en el juego, registrás la hora de muerte y la app calcula automáticamente la ventana de respawn. Te avisa con una notificación de escritorio y un sonido de alerta cuando el boss está por aparecer.
+Cuando un MVP muere en el juego, registras la hora de muerte y la app calcula automáticamente la ventana de respawn. Te avisa con una notificación de escritorio y un sonido de alerta cuando el boss está por aparecer.
 
 ### Flujo básico
 
 ```
-1. Buscás el MVP (por nombre o alias)
-2. Ingresás la hora de muerte (HH:mm) — o usás la hora actual
+1. Buscas el MVP (por nombre o alias)
+2. Ingresas la hora de muerte (HH:mm) — o usas la hora actual
 3. La app calcula min/max respawn y arranca el countdown
 4. A los 5 minutos del respawn → notificación de advertencia
 5. Al llegar al respawn mínimo → notificación + sonido de alerta
@@ -284,7 +284,7 @@ Cuando un MVP muere en el juego, registrás la hora de muerte y la app calcula a
 - Fallback a beep generado por Web Audio si no hay archivo disponible
 
 ### Configuración
-- **Timezone del servidor**: cómo se interpretan las horas de muerte que ingresás
+- **Timezone del servidor**: cómo se interpretan las horas de muerte que ingresas
 - **Timezone de visualización**: cómo se muestran los horarios de respawn
 - Preview en tiempo real de la hora actual en cada zona horaria
 - **Idioma**: Español / English
@@ -322,7 +322,7 @@ Cuando un MVP muere en el juego, registrás la hora de muerte y la app calcula a
 
 ```bash
 # Clonar el repositorio
-git clone https://github.com/tu-usuario/RagnarokMVPtimer.git
+git clone https://github.com/sarjador/RagnarokMVPtimer.git
 cd RagnarokMVPtimer
 
 # Instalar dependencias
@@ -430,8 +430,8 @@ Todas las escrituras son **atómicas** (write tmp → rename) para evitar corrup
 ## Agregar sonido de alerta personalizado
 
 1. Abrí **Settings** en la app
-2. Hacé click en **"Choose file…"** en la sección de sonido
-3. Seleccioná un archivo de audio (mp3, ogg, wav, flac, aac, webm)
+2. Hacer click en **"Choose file…"** en la sección de sonido
+3. Selecciona un archivo de audio (mp3, ogg, wav, flac, aac, webm)
 4. El nombre del archivo queda guardado y se restaura en la próxima sesión
 
 > El path absoluto del archivo **nunca** sale del proceso principal de Electron por razones de seguridad.
