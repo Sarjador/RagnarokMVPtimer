@@ -10,8 +10,14 @@ contextBridge.exposeInMainWorld('electronAPI', {
   /** Send a native OS notification (fallback for renderer-side Notification API) */
   sendNotification: (opts) => ipcRenderer.invoke('notification:send', opts),
 
-  /** Open the OS native file-open dialog filtered to audio formats; returns absolute path or null */
+  /** Open the OS native file-open dialog filtered to audio formats; returns filename (no path) or null */
   pickAudioFile: () => ipcRenderer.invoke('dialog:pickAudio'),
+
+  /** Request the file:// URL for the current audio selection (resolved in main process) */
+  getAudioPath: () => ipcRenderer.invoke('audio:getPath'),
+
+  /** On startup, send the saved filename so the main process can try to resolve the path */
+  restoreAudioPath: (filename) => ipcRenderer.invoke('audio:restorePath', filename),
 
   /** Open the Ko-Fi donation page in the system default browser */
   openExternal: () => ipcRenderer.invoke('shell:openExternal'),

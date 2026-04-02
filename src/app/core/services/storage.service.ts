@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AppState } from '../models/mvp-tracker.model';
 import { CustomBossListJson } from '../models/boss.model';
+import { parseAppState, parseCustomBossList } from '../utils/state-validators';
 
 /**
  * Wraps Electron IPC storage calls. Falls back to a no-op when running
@@ -15,7 +16,8 @@ export class StorageService {
   async readState(): Promise<AppState | null> {
     if (!this.api) return null;
     try {
-      return await this.api.storageRead();
+      const raw = await this.api.storageRead();
+      return parseAppState(raw);
     } catch {
       return null;
     }
@@ -33,7 +35,8 @@ export class StorageService {
   async readCustomBosses(): Promise<CustomBossListJson | null> {
     if (!this.api) return null;
     try {
-      return await this.api.customBossesRead();
+      const raw = await this.api.customBossesRead();
+      return parseCustomBossList(raw);
     } catch {
       return null;
     }

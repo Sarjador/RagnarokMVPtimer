@@ -79,13 +79,20 @@ export class NotificationService implements OnDestroy {
   /**
    * Plays an alert sound. Tries each bundled audio file in turn;
    * falls back to a synthesised Web-Audio beep if none is found.
+   *
+   * El path absoluto del audio personalizado NUNCA vive en el renderer:
+   * se solicita al main process via IPC (audio:getPath) para evitar
+   * exponer rutas del filesystem al contexto web.
    */
-  private playAlertSound(): void {
-    const custom = this.appSettings.customAudioPath();
-    const candidates = custom
-      ? [`file:///${custom.replace(/\\/g, '/')}`, ...AUDIO_CANDIDATES]
-      : AUDIO_CANDIDATES;
-    this.tryPlayFile(candidates, 0);
+  private async playAlertSound(): Promise<void> {
+    const hasCustom = !!this.appSettings.customAudioPath();
+    if (hasCustom && window.electronAPI) {
+      const fileUrl = await window.electronAPI.getAudioPath();
+      const candidates = fileUrl ? [fileUrl, ...AUDIO_CANDIDATES] : AUDIO_CANDIDATES;
+      this.tryPlayFile(candidates, 0);
+    } else {
+      this.tryPlayFile(AUDIO_CANDIDATES, 0);
+    }
   }
 
   private tryPlayFile(candidates: string[], index: number): void {

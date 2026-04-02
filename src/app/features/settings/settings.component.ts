@@ -1,5 +1,6 @@
 import { Component, computed, inject, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AppSettingsService } from '../../core/services/app-settings.service';
 import { LocaleService } from '../../core/services/locale.service';
 import { StorageService } from '../../core/services/storage.service';
@@ -21,8 +22,20 @@ export class SettingsComponent {
   readonly locale = inject(LocaleService);
   private readonly storage = inject(StorageService);
   private readonly timerService = inject(MvpTimerService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly t = this.locale.t.bind(this.locale);
+
+  /**
+   * Unico uso de innerHTML en la app — el contenido proviene de translations.ts
+   * que es un archivo estatico hardcodeado en el bundle, no de usuario ni red.
+   * Se marca explicito con bypassSecurityTrustHtml para que el code review
+   * pueda auditar este patron facilmente (buscar bypassSecurityTrustHtml).
+   */
+  readonly infoExampleHtml = computed((): SafeHtml => {
+    const raw = this.locale.t('settings.info-example');
+    return this.sanitizer.bypassSecurityTrustHtml(raw);
+  });
 
   readonly timezones = COMMON_TIMEZONES;
   readonly isElectron = typeof window !== 'undefined' && !!window.electronAPI;
@@ -63,9 +76,11 @@ export class SettingsComponent {
   }
 
   async pickAudio(): Promise<void> {
-    const path = await window.electronAPI!.pickAudioFile();
-    if (path !== null) {
-      this.appSettings.setCustomAudioPath(path);
+    // pickAudioFile() devuelve solo el nombre del archivo (sin path absoluto).
+    // El path absoluto queda en el main process — nunca viaja al renderer.
+    const filename = await window.electronAPI!.pickAudioFile();
+    if (filename !== null) {
+      this.appSettings.setCustomAudioPath(filename);
       this.persist();
     }
   }

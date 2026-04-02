@@ -6,7 +6,7 @@
     <div class="field field--full">
       <label class="label" for="abf-name">{{ t('catalog.form.name-label') }} <span class="required">*</span></label>
       <input id="abf-name" class="input" type="text" formControlName="bossName"
-             placeholder="e.g. Bio MVP" [class.input--error]="nameInvalid" />
+             placeholder="e.g. Bio MVP" maxlength="100" [class.input--error]="nameInvalid" />
       @if (nameInvalid) {
         <span class="field-error">Name is required.</span>
       }
@@ -46,35 +46,38 @@
     <div class="field">
       <label class="label" for="abf-loc">{{ t('catalog.form.location-label') }}</label>
       <input id="abf-loc" class="input" type="text" formControlName="location"
-             placeholder="e.g. ein_dun02" />
+             placeholder="e.g. ein_dun02" maxlength="100" />
     </div>
 
     <!-- Race (optional) -->
     <div class="field">
       <label class="label" for="abf-race">{{ t('catalog.form.race-label') }}</label>
       <input id="abf-race" class="input" type="text" formControlName="race"
-             placeholder="e.g. Demi-Human" />
+             placeholder="e.g. Demi-Human" maxlength="60" />
     </div>
 
     <!-- Property (optional) -->
     <div class="field">
       <label class="label" for="abf-prop">{{ t('catalog.form.property-label') }}</label>
       <input id="abf-prop" class="input" type="text" formControlName="property"
-             placeholder="e.g. Dark 3" />
+             placeholder="e.g. Dark 3" maxlength="60" />
     </div>
 
     <!-- Image URL (optional) -->
     <div class="field field--full">
       <label class="label" for="abf-img">{{ t('catalog.form.image-url-label') }}</label>
       <input id="abf-img" class="input" type="url" formControlName="imageUrl"
-             placeholder="https://…" />
+             placeholder="https://…" [class.input--error]="form.get('imageUrl')!.invalid && form.get('imageUrl')!.touched" />
+      @if (form.get('imageUrl')!.hasError('unsafeUrl') && form.get('imageUrl')!.touched) {
+        <span class="field-error">Only http/https URLs are allowed.</span>
+      }
     </div>
 
     <!-- Alias (optional) -->
     <div class="field field--full">
       <label class="label" for="abf-alias">{{ t('catalog.form.alias-label') }} <span class="hint">({{ t('catalog.form.alias-hint') }})</span></label>
       <input id="abf-alias" class="input" type="text" formControlName="alias"
-             placeholder="e.g. Bio, Custom Boss" />
+             placeholder="e.g. Bio, Custom Boss" maxlength="300" />
     </div>
   </div>
 

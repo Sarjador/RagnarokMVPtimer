@@ -41,7 +41,14 @@ export class AppSettingsService {
     const state = await this.storage.readState();
     if (state?.serverTimezone) this._serverTimezone.set(state.serverTimezone);
     if (state?.displayTimezone) this._displayTimezone.set(state.displayTimezone);
-    if (state?.customAudioPath) this._customAudioPath.set(state.customAudioPath);
     if (state?.locale) this._locale.set(state.locale);
+
+    if (state?.customAudioPath) {
+      // Guardamos solo el nombre de archivo (sin path) — el path absoluto vive
+      // unicamente en el main process. Notificamos al main para que resuelva.
+      const filename = state.customAudioPath;
+      this._customAudioPath.set(filename);
+      window.electronAPI?.restoreAudioPath(filename);
+    }
   }
 }

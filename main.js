@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Notification, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, Notification, dialog, shell, session } = require('electron');
 const path = require('path');
 const fs = require('fs');
 
@@ -59,6 +59,30 @@ app.on('second-instance', () => {
 
 app.whenReady().then(() => {
   resolveStatePaths();
+
+  // ── Content Security Policy ──────────────────────────────────────────────
+  // Restringe la ejecucion de scripts, carga de recursos y conexiones de red
+  // al origen propio (file://) para mitigar XSS y exfiltracion de datos.
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        'Content-Security-Policy': [
+          [
+            "default-src 'self'",
+            "script-src 'self'",
+            "style-src 'self' 'unsafe-inline'",   // Angular necesita estilos inline
+            "img-src 'self' https: data:",         // imagenes remotas http/https y data URIs de imagen
+            "media-src 'self' file:",              // audio local via file://
+            "connect-src 'none'",                  // sin fetch/XHR a URLs externas
+            "frame-src 'none'",
+            "object-src 'none'",
+          ].join('; '),
+        ],
+      },
+    });
+  });
+
   createWindow();
 
   app.on('activate', () => {
@@ -83,13 +107,23 @@ ipcMain.handle('storage:read', () => {
 });
 
 // ── IPC: storage:write (atomic write via tmp → rename) ───────────────────────
+const MAX_STATE_BYTES = 2 * 1024 * 1024; // 2 MB — suficiente para miles de entradas
+
 ipcMain.handle('storage:write', (_event, data) => {
   const json = JSON.stringify(data, null, 2);
+  if (Buffer.byteLength(json, 'utf-8') > MAX_STATE_BYTES) {
+    throw new Error('storage:write rejected: payload exceeds size limit');
+  }
   fs.writeFileSync(TEMP_FILE, json, 'utf-8');
   fs.renameSync(TEMP_FILE, STATE_FILE);
 });
 
 // ── IPC: dialog:pickAudio ────────────────────────────────────────────────────
+// Retorna solo el nombre del archivo (sin path) al renderer para preservar
+// la privacidad del usuario (no exponer la estructura del filesystem).
+// El path absoluto se almacena en memoria en el main process (audioFilePath).
+let audioFilePath = null; // path absoluto — solo vive en el main process
+
 ipcMain.handle('dialog:pickAudio', async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
     title: 'Seleccionar sonido de alerta',
@@ -98,7 +132,32 @@ ipcMain.handle('dialog:pickAudio', async () => {
     ],
     properties: ['openFile'],
   });
-  return result.canceled || result.filePaths.length === 0 ? null : result.filePaths[0];
+  if (result.canceled || result.filePaths.length === 0) return null;
+  audioFilePath = result.filePaths[0];
+  return path.basename(audioFilePath); // solo el nombre al renderer
+});
+
+// ── IPC: audio:getPath ────────────────────────────────────────────────────────
+// El renderer solicita el file:// URL para reproducir el audio.
+// Solo se devuelve si el path fue elegido en esta sesion via el dialogo oficial.
+ipcMain.handle('audio:getPath', () => {
+  if (!audioFilePath) return null;
+  return `file:///${audioFilePath.replace(/\\/g, '/')}`;
+});
+
+// ── IPC: audio:restorePath ────────────────────────────────────────────────────
+// Al iniciar la app, el renderer envia el nombre de archivo guardado para que
+// el main process pueda buscarlo en userData si existe una copia alli.
+// Esto permite persistencia entre sesiones sin exponer paths absolutos.
+ipcMain.handle('audio:restorePath', (_event, filename) => {
+  if (!filename || typeof filename !== 'string') return;
+  // Solo aceptamos nombres de archivo simples (sin separadores de path)
+  const safeName = path.basename(filename);
+  if (safeName !== filename) return; // rechazar si contenia separadores
+  const candidate = path.join(app.getPath('userData'), 'audio', safeName);
+  if (fs.existsSync(candidate)) {
+    audioFilePath = candidate;
+  }
 });
 
 // ── IPC: shell:openExternal (Ko-Fi donation link) ────────────────────────────
@@ -119,8 +178,13 @@ ipcMain.handle('custom-bosses:read', () => {
 });
 
 // ── IPC: custom-bosses:write (atomic write via tmp → rename) ─────────────────
+const MAX_CUSTOM_BOSSES_BYTES = 512 * 1024; // 512 KB — amplio margen para bosses custom
+
 ipcMain.handle('custom-bosses:write', (_event, data) => {
   const json = JSON.stringify(data, null, 2);
+  if (Buffer.byteLength(json, 'utf-8') > MAX_CUSTOM_BOSSES_BYTES) {
+    throw new Error('custom-bosses:write rejected: payload exceeds size limit');
+  }
   fs.writeFileSync(CUSTOM_BOSSES_TEMP, json, 'utf-8');
   fs.renameSync(CUSTOM_BOSSES_TEMP, CUSTOM_BOSSES_FILE);
 });

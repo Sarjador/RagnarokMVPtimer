@@ -2,6 +2,15 @@ import {
   Component, output, inject, ChangeDetectionStrategy,
 } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+
+/** Permite solo URLs http/https, rutas relativas del bundle y cadena vacia */
+function safeImageUrl(control: AbstractControl): ValidationErrors | null {
+  const val: string = control.value ?? '';
+  if (!val) return null; // campo opcional
+  if (/^https?:\/\//i.test(val)) return null;
+  if (/^\.\//.test(val)) return null;
+  return { unsafeUrl: true };
+}
 import { BossCatalogService } from '../../../core/services/boss-catalog.service';
 import { LocaleService } from '../../../core/services/locale.service';
 
@@ -31,15 +40,15 @@ export class AddBossFormComponent {
   readonly cancelled = output<void>();
 
   readonly form = new FormGroup({
-    bossName: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(1)] }),
-    minRespawnMin: new FormControl<number | null>(null, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]),
-    maxRespawnMin: new FormControl<number | null>(null, [Validators.required, Validators.min(1), Validators.pattern(/^\d+$/)]),
-    HP: new FormControl<number | null>(null, [Validators.min(0)]),
-    race: new FormControl('', { nonNullable: true }),
-    property: new FormControl('', { nonNullable: true }),
-    location: new FormControl('', { nonNullable: true }),
-    imageUrl: new FormControl('', { nonNullable: true }),
-    alias: new FormControl('', { nonNullable: true }),
+    bossName:      new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(1), Validators.maxLength(100)] }),
+    minRespawnMin: new FormControl<number | null>(null, [Validators.required, Validators.min(1), Validators.max(100_000), Validators.pattern(/^\d+$/)]),
+    maxRespawnMin: new FormControl<number | null>(null, [Validators.required, Validators.min(1), Validators.max(100_000), Validators.pattern(/^\d+$/)]),
+    HP:            new FormControl<number | null>(null, [Validators.min(0), Validators.max(2_147_483_647)]),
+    race:          new FormControl('', { nonNullable: true, validators: [Validators.maxLength(60)] }),
+    property:      new FormControl('', { nonNullable: true, validators: [Validators.maxLength(60)] }),
+    location:      new FormControl('', { nonNullable: true, validators: [Validators.maxLength(100)] }),
+    imageUrl:      new FormControl('', { nonNullable: true, validators: [safeImageUrl, Validators.maxLength(500)] }),
+    alias:         new FormControl('', { nonNullable: true, validators: [Validators.maxLength(300)] }),
   }, { validators: maxGeMin });
 
   get nameInvalid(): boolean {
