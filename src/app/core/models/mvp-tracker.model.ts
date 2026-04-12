@@ -21,8 +21,8 @@ export interface MvpTrackerEntry {
 
 export interface AppState {
   activeEntries: MvpTrackerEntry[];
-  serverTimezone: string;
-  displayTimezone: string;
+  serverTimezone?: string;
+  displayTimezone?: string;
   customAudioPath?: string;
   locale?: 'en' | 'es';
 }
