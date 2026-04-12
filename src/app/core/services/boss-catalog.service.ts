@@ -1,10 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { BossEntry, CustomBossListJson } from '../models/boss.model';
 import { StorageService } from './storage.service';
-
-interface BossListJson {
-  bosses: BossEntry[];
-}
+import bossListData from '../../../assets/data/bossList.json';
 
 const CUSTOM_BOSS_ID_START = 900_000;
 
@@ -31,13 +28,10 @@ export class BossCatalogService {
 
   private async loadCatalog(): Promise<void> {
     try {
-      const [standardEntries, customData] = await Promise.all([
-        this.loadStandard(),
-        this.loadCustom(),
-      ]);
+      const customData = await this.loadCustom();
       this._customData = customData;
       this._bosses.set([
-        ...standardEntries,
+        ...this.loadStandard(),
         ...customData.bosses.map((b) => ({ ...b, isCustom: true as const })),
       ]);
       this._loaded.set(true);
@@ -46,10 +40,8 @@ export class BossCatalogService {
     }
   }
 
-  private async loadStandard(): Promise<BossEntry[]> {
-    const response = await fetch('./data/bossList.json');
-    const data: BossListJson = await response.json();
-    return data.bosses.map(({ ID, bossName, HP, race, property, location,
+  private loadStandard(): BossEntry[] {
+    return bossListData.bosses.map(({ ID, bossName, HP, race, property, location,
       minRespawnTimeScheduleInSeconds, maxRespawnTimeScheduleInSeconds,
       imageUrl, alias }) => ({
       ID, bossName, HP, race, property, location,
