@@ -798,8 +798,8 @@ Todas las escrituras son **atómicas** (write tmp → rename) para evitar corrup
 
 ## Agregar sonido de alerta personalizado
 
-1. Abrí **Settings** en la app
-2. Hacer click en **"Choose file…"** en la sección de sonido
+1. Abre **Settings** en la app
+2. Hacer clic en **"Choose file…"** en la sección de sonido
 3. Selecciona un archivo de audio (mp3, ogg, wav, flac, aac, webm)
 4. El nombre del archivo queda guardado y se restaura en la próxima sesión
 
@@ -828,25 +828,25 @@ npm start
 
 ### La app Electron crashea al iniciar
 
-1. Revisá la salida de consola en la terminal donde corriste `npm run electron:serve`
-2. Verificá que `main.js` y `preload.js` no tengan errores de sintaxis
-3. Asegurate de que la carpeta `dist/` exista (corré `npm run electron:build` primero)
+1. Revisa la salida de consola en la terminal donde ejecutaste `npm run electron:serve`
+2. Verifica que `main.js` y `preload.js` no tengan errores de sintaxis
+3. Asegúrate de que la carpeta `dist/` exista (ejecuta `npm run electron:build` primero)
 
 ### Las notificaciones no aparecen (Windows)
 
-- Andá a **Configuración → Notificaciones** en Windows
-- Buscá "RO MVP Timer" y habilitá las notificaciones
-- Verificá que el modo No Molestar esté desactivado
+- Ve a **Configuración → Notificaciones** en Windows
+- Busca "RO MVP Timer" y habilita las notificaciones
+- Verifica que el modo No Molestar esté desactivado
 
 ### Las notificaciones no aparecen (macOS)
 
-- Andá a **Configuración del Sistema → Notificaciones**
-- Buscá "RO MVP Timer" y permití notificaciones
-- Verificá que el modo Focus no esté bloqueando la app
+- Ve a **Configuración del Sistema → Notificaciones**
+- Busca "RO MVP Timer" y permite notificaciones
+- Verifica que el modo Focus no esté bloqueando la app
 
 ### Ventana de la app en blanco o blanca
 
-Esto suele significar que el build de Angular falló o no se cargó correctamente. Intentá:
+Esto suele significar que el build de Angular falló o no se cargó correctamente. Intenta:
 
 ```bash
 # Limpiar y rebuild
@@ -857,13 +857,13 @@ npm run electron:serve
 
 ### macOS: "RO MVP Timer no puede abrirse porque es de un desarrollador no identificado"
 
-1. Hacé click derecho en el archivo `.dmg` → **Abrir**
-2. Hacé click en **Abrir** en el diálogo
+1. Haz clic derecho en el archivo `.dmg` → **Abrir**
+2. Haz clic en **Abrir** en el diálogo
 3. Alternativamente: **Configuración del Sistema → Privacidad y Seguridad → Abrir de todos modos**
 
 ### Linux: AppImage no ejecuta
 
-Hacé el archivo ejecutable:
+Haz el archivo ejecutable:
 
 ```bash
 chmod +x "RO MVP Timer-0.1.0.AppImage"
@@ -884,13 +884,13 @@ Ejecuta los tests unitarios con Karma y Jasmine. Los tests cubren los servicios 
 
 ## Contribuir
 
-1. Hacé un fork del repositorio
-2. Creá una rama para tu feature: `git checkout -b feature/mi-feature`
-3. Hacé tus cambios y commiteá: `git commit -m "Add mi feature"`
-4. Pusheá a tu fork: `git push origin feature/mi-feature`
-5. Abrí un Pull Request contra `develop`
+1. Haz un fork del repositorio
+2. Crea una rama para tu feature: `git checkout -b feature/mi-feature`
+3. Haz tus cambios y haz commit: `git commit -m "Add mi feature"`
+4. Envía los cambios a tu fork: `git push origin feature/mi-feature`
+5. Abre un Pull Request contra `develop`
 
-Por favor, mantené el estilo de código consistente con la configuración de Prettier y ESLint del proyecto.
+Por favor, mantén el estilo de código consistente con la configuración de Prettier y ESLint del proyecto.
 
 ---
 
