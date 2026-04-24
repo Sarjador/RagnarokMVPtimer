@@ -65,7 +65,7 @@
   },
   "devDependencies": {
     "@angular/build": "^20.3.23",
-    "@angular/cli": "^20.3.3",
+    "@angular/cli": "^21.2.8",
     "@angular/compiler-cli": "^21.2.9",
     "@types/jasmine": "~5.1.0",
     "electron": "^39.8.5",
