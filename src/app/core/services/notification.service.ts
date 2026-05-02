@@ -8,8 +8,7 @@ import { formatUnixToTime } from '../utils/time-utils';
 
 // Audio files to try in order (user can add any of these to public/audio/)
 const AUDIO_CANDIDATES = [
-  './audio/Murloc.mp3',
-  './audio/alert.mp3',
+  './audio/alerta.mp3',
   './audio/alert.ogg',
 ];
 
@@ -105,12 +104,15 @@ export class NotificationService implements OnDestroy {
     audio.play().catch(() => this.tryPlayFile(candidates, index + 1));
   }
 
-  private playBeep(): void {
+  private async playBeep(): Promise<void> {
     try {
       if (!this.audioCtx || this.audioCtx.state === 'closed') {
         this.audioCtx = new AudioContext();
       }
       const ctx = this.audioCtx;
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);

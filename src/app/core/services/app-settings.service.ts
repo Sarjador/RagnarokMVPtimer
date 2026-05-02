@@ -1,6 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Locale } from '../i18n/translations';
+import { AppState } from '../models/mvp-tracker.model';
 
 const DEFAULT_SERVER_TZ = 'America/Sao_Paulo';
 const DEFAULT_DISPLAY_TZ = 'Europe/Madrid';
@@ -17,9 +18,7 @@ export class AppSettingsService {
   readonly customAudioPath = this._customAudioPath.asReadonly();
   readonly locale = this._locale.asReadonly();
 
-  constructor(private readonly storage: StorageService) {
-    this.loadFromStorage();
-  }
+  constructor(private readonly storage: StorageService) {}
 
   setServerTimezone(tz: string): void {
     this._serverTimezone.set(tz);
@@ -37,16 +36,16 @@ export class AppSettingsService {
     this._locale.set(locale);
   }
 
-  async loadFromStorage(): Promise<void> {
-    const state = await this.storage.readState();
-    if (state?.serverTimezone) this._serverTimezone.set(state.serverTimezone);
-    if (state?.displayTimezone) this._displayTimezone.set(state.displayTimezone);
-    if (state?.locale) this._locale.set(state.locale);
+  async loadFromStorage(state?: AppState | null): Promise<void> {
+    const s = state ?? (await this.storage.readState());
+    if (s?.serverTimezone) this._serverTimezone.set(s.serverTimezone);
+    if (s?.displayTimezone) this._displayTimezone.set(s.displayTimezone);
+    if (s?.locale) this._locale.set(s.locale);
 
-    if (state?.customAudioPath) {
+    if (s?.customAudioPath) {
       // Guardamos solo el nombre de archivo (sin path) — el path absoluto vive
       // unicamente en el main process. Notificamos al main para que resuelva.
-      const filename = state.customAudioPath;
+      const filename = s.customAudioPath;
       this._customAudioPath.set(filename);
       window.electronAPI?.restoreAudioPath(filename);
     }

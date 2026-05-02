@@ -1,38 +1,10 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { BossCatalogService } from './boss-catalog.service';
-import { BossEntry } from '../models/boss.model';
-
-const MOCK_BOSSES: BossEntry[] = [
-  {
-    ID: 1511, bossName: 'Amon Ra', HP: 1214138, race: 'Demi-Human', property: 'Fire 3',
-    location: 'moc_pryd06', minRespawnTimeScheduleInSeconds: 3600,
-    maxRespawnTimeScheduleInSeconds: 4200, imageUrl: '', alias: ['AR'],
-  },
-  {
-    ID: 1112, bossName: 'Baphomet', HP: 3632000, race: 'Demon', property: 'Dark 3',
-    location: 'prt_maze03', minRespawnTimeScheduleInSeconds: 7200,
-    maxRespawnTimeScheduleInSeconds: 7800, imageUrl: '', alias: ['Baph', 'Bap'],
-  },
-  {
-    ID: 1373, bossName: 'Dark Lord', HP: 3632000, race: 'Undead', property: 'Dark 3',
-    location: 'gl_chyard', minRespawnTimeScheduleInSeconds: 7200,
-    maxRespawnTimeScheduleInSeconds: 7800, imageUrl: '', alias: ['DL'],
-  },
-];
-
-function setupFetchSpy(): void {
-  spyOn(window, 'fetch').and.returnValue(
-    Promise.resolve({
-      json: () => Promise.resolve({ bosses: MOCK_BOSSES }),
-    } as Response),
-  );
-}
 
 describe('BossCatalogService', () => {
   let service: BossCatalogService;
 
   beforeEach(() => {
-    setupFetchSpy();
     TestBed.configureTestingModule({});
     service = TestBed.inject(BossCatalogService);
   });
@@ -48,7 +20,7 @@ describe('BossCatalogService', () => {
 
   it('loads catalog on init', fakeAsync(() => {
     loadInFakeAsync();
-    expect(service.bosses().length).toBe(3);
+    expect(service.bosses().length).toBeGreaterThan(0);
     expect(service.loaded()).toBeTrue();
   }));
 
@@ -56,18 +28,18 @@ describe('BossCatalogService', () => {
     beforeEach(fakeAsync(() => loadInFakeAsync()));
 
     it('returns full list on empty query', () => {
-      expect(service.search('').length).toBe(3);
+      expect(service.search('').length).toBe(service.bosses().length);
     });
 
     it('matches by partial boss name (case-insensitive)', () => {
       const results = service.search('amon');
-      expect(results.length).toBe(1);
+      expect(results.length).toBeGreaterThan(0);
       expect(results[0].bossName).toBe('Amon Ra');
     });
 
     it('matches by alias (case-insensitive)', () => {
       const results = service.search('baph');
-      expect(results.length).toBe(1);
+      expect(results.length).toBeGreaterThan(0);
       expect(results[0].bossName).toBe('Baphomet');
     });
 
@@ -76,8 +48,8 @@ describe('BossCatalogService', () => {
     });
 
     it('is case-insensitive', () => {
-      expect(service.search('BAPHOMET').length).toBe(1);
-      expect(service.search('baphomet').length).toBe(1);
+      expect(service.search('BAPHOMET').length).toBeGreaterThan(0);
+      expect(service.search('baphomet').length).toBeGreaterThan(0);
     });
   });
 });

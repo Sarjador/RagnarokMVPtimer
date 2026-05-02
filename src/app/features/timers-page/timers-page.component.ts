@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, signal, ViewChild, inject, ChangeDetectorRef,
+  Component, ChangeDetectionStrategy, signal, inject,
 } from '@angular/core';
 import { BossEntry } from '../../core/models/boss.model';
 import { LocaleService } from '../../core/services/locale.service';
@@ -18,13 +18,11 @@ export type ActiveTab = 'catalog' | 'active';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimersPageComponent {
-  @ViewChild(BossSearchComponent) private bossSearch?: BossSearchComponent;
-
   private readonly locale = inject(LocaleService);
-  private readonly cdr = inject(ChangeDetectorRef);
   readonly t = this.locale.t.bind(this.locale);
 
   readonly activeTab = signal<ActiveTab>('catalog');
+  readonly prefillBoss = signal<BossEntry | null>(null);
 
   setTab(tab: ActiveTab): void {
     this.activeTab.set(tab);
@@ -32,9 +30,6 @@ export class TimersPageComponent {
 
   onBossSelected(boss: BossEntry): void {
     this.activeTab.set('active');
-    // detectChanges() forces Angular to render the @if block synchronously,
-    // resolving the @ViewChild before we call prefillBoss.
-    this.cdr.detectChanges();
-    this.bossSearch?.prefillBoss(boss);
+    this.prefillBoss.set(boss);
   }
 }

@@ -1,5 +1,5 @@
 import {
-  Component, computed, signal, inject, ChangeDetectionStrategy, ViewChild, ElementRef,
+  Component, computed, signal, input, inject, ChangeDetectionStrategy, ViewChild, ElementRef, effect,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BossEntry } from '../../core/models/boss.model';
@@ -37,6 +37,18 @@ export class BossSearchComponent {
     if (q.length < 1) return [];
     return this.catalog.search(q).slice(0, 10);
   });
+
+  /** Boss passed from parent to prefill when switching from catalog to active tab */
+  readonly prefill = input<BossEntry | null>(null);
+
+  constructor() {
+    effect(() => {
+      const boss = this.prefill();
+      if (boss) {
+        this.prefillBoss(boss);
+      }
+    });
+  }
 
   onQueryInput(value: string): void {
     this.query.set(value);

@@ -101,7 +101,10 @@ ipcMain.handle('storage:read', () => {
     const raw = fs.readFileSync(STATE_FILE, 'utf-8');
     return JSON.parse(raw);
   } catch {
-    try { fs.unlinkSync(STATE_FILE); } catch { /* ignore */ }
+    try {
+      const corruptName = `${STATE_FILE}.corrupt.${Date.now()}`;
+      fs.renameSync(STATE_FILE, corruptName);
+    } catch { /* ignore */ }
     return null;
   }
 });

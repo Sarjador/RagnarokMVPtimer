@@ -1,6 +1,5 @@
 import { TestBed, fakeAsync, flushMicrotasks, discardPeriodicTasks } from '@angular/core/testing';
 import { MvpTimerService } from './mvp-timer.service';
-import { StorageService } from './storage.service';
 import { AppSettingsService } from './app-settings.service';
 import { BossEntry } from '../models/boss.model';
 import { MvpTrackerEntry } from '../models/mvp-tracker.model';
@@ -22,13 +21,8 @@ function makeEntry(overrides: Partial<MvpTrackerEntry> = {}): MvpTrackerEntry {
 
 describe('MvpTimerService', () => {
   let service: MvpTimerService;
-  let storageSpy: jasmine.SpyObj<StorageService>;
 
   beforeEach(fakeAsync(() => {
-    storageSpy = jasmine.createSpyObj('StorageService', ['readState', 'writeState']);
-    storageSpy.readState.and.returnValue(Promise.resolve(null));
-    storageSpy.writeState.and.returnValue(Promise.resolve());
-
     const tzSpy = jasmine.createSpyObj('AppSettingsService', [], {
       serverTimezone: jasmine.createSpy().and.returnValue('America/Sao_Paulo'),
       displayTimezone: jasmine.createSpy().and.returnValue('Europe/Madrid'),
@@ -38,12 +32,10 @@ describe('MvpTimerService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: StorageService, useValue: storageSpy },
         { provide: AppSettingsService, useValue: tzSpy },
       ],
     });
     service = TestBed.inject(MvpTimerService);
-    flushMicrotasks();
   }));
 
   afterEach(() => { service.ngOnDestroy(); });
@@ -58,12 +50,6 @@ describe('MvpTimerService', () => {
       expect(entry.minRespawnTime).toBe(entry.deathTime + MOCK_BOSS.minRespawnTimeScheduleInSeconds);
       expect(entry.maxRespawnTime).toBe(entry.deathTime + MOCK_BOSS.maxRespawnTimeScheduleInSeconds);
       expect(entry.fiveMinWarningSent).toBeFalse();
-      discardPeriodicTasks();
-    }));
-
-    it('persists state after adding', fakeAsync(() => {
-      service.addMvp(MOCK_BOSS);
-      expect(storageSpy.writeState).toHaveBeenCalled();
       discardPeriodicTasks();
     }));
 
@@ -154,14 +140,9 @@ describe('MvpTimerService', () => {
   describe('restore on init', () => {
     it('discards expired entries via direct init() call', fakeAsync(() => {
       const expiredEntry = makeEntry({ maxRespawnTime: 1000 });
-      storageSpy.readState.and.returnValue(Promise.resolve({
-        activeEntries: [expiredEntry],
-        serverTimezone: 'America/Sao_Paulo',
-        displayTimezone: 'Europe/Madrid',
-      }));
 
       (service as any)._entries.set([]);
-      (service as any).init();
+      (service as any).init([expiredEntry]);
       flushMicrotasks();
 
       expect(service.activeEntries().length).toBe(0);
@@ -171,14 +152,9 @@ describe('MvpTimerService', () => {
     it('keeps valid future entries via direct init() call', fakeAsync(() => {
       const nowSec = Math.floor(Date.now() / 1000);
       const validEntry = makeEntry({ maxRespawnTime: nowSec + 7200 });
-      storageSpy.readState.and.returnValue(Promise.resolve({
-        activeEntries: [validEntry],
-        serverTimezone: 'America/Sao_Paulo',
-        displayTimezone: 'Europe/Madrid',
-      }));
 
       (service as any)._entries.set([]);
-      (service as any).init();
+      (service as any).init([validEntry]);
       flushMicrotasks();
 
       expect(service.activeEntries().length).toBe(1);

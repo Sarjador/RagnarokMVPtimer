@@ -1,18 +1,26 @@
 import { TestBed } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { LocaleService } from './locale.service';
 import { AppSettingsService } from './app-settings.service';
+import { Locale } from '../i18n/translations';
+
+function createMockAppSettings(): AppSettingsService {
+  const locale = signal<Locale>('en');
+  return {
+    locale: locale.asReadonly(),
+    setLocale: (l: Locale) => locale.set(l),
+  } as unknown as AppSettingsService;
+}
 
 describe('LocaleService', () => {
   let service: LocaleService;
-  let appSettingsSpy: jasmine.SpyObj<AppSettingsService>;
+  let mockAppSettings: AppSettingsService;
 
   beforeEach(() => {
-    appSettingsSpy = jasmine.createSpyObj('AppSettingsService', ['setLocale'], {
-      locale: jasmine.createSpy().and.returnValue('en'),
-    });
+    mockAppSettings = createMockAppSettings();
 
     TestBed.configureTestingModule({
-      providers: [{ provide: AppSettingsService, useValue: appSettingsSpy }],
+      providers: [{ provide: AppSettingsService, useValue: mockAppSettings }],
     });
     service = TestBed.inject(LocaleService);
   });
@@ -47,8 +55,9 @@ describe('LocaleService', () => {
   });
 
   it('setLocale() delegates to AppSettingsService', () => {
+    const setLocaleSpy = spyOn(mockAppSettings, 'setLocale').and.callThrough();
     service.setLocale('es');
-    expect(appSettingsSpy.setLocale).toHaveBeenCalledWith('es');
+    expect(setLocaleSpy).toHaveBeenCalledWith('es');
   });
 
   it('ti() interpolates placeholders', () => {

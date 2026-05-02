@@ -3,7 +3,6 @@ import { FormsModule } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { AppSettingsService } from '../../core/services/app-settings.service';
 import { LocaleService } from '../../core/services/locale.service';
-import { StorageService } from '../../core/services/storage.service';
 import { MvpTimerService } from '../../core/services/mvp-timer.service';
 import { COMMON_TIMEZONES } from '../../core/utils/timezones';
 import { getCurrentTimeInTimezone } from '../../core/utils/time-utils';
@@ -20,7 +19,6 @@ import { Locale } from '../../core/i18n/translations';
 export class SettingsComponent {
   private readonly appSettings = inject(AppSettingsService);
   readonly locale = inject(LocaleService);
-  private readonly storage = inject(StorageService);
   private readonly timerService = inject(MvpTimerService);
   private readonly sanitizer = inject(DomSanitizer);
 
@@ -62,17 +60,14 @@ export class SettingsComponent {
 
   onServerTimezoneChange(tz: string): void {
     this.appSettings.setServerTimezone(tz);
-    this.persist();
   }
 
   onDisplayTimezoneChange(tz: string): void {
     this.appSettings.setDisplayTimezone(tz);
-    this.persist();
   }
 
   onLocaleChange(locale: Locale): void {
     this.locale.setLocale(locale);
-    this.persist();
   }
 
   async pickAudio(): Promise<void> {
@@ -81,23 +76,10 @@ export class SettingsComponent {
     const filename = await window.electronAPI!.pickAudioFile();
     if (filename !== null) {
       this.appSettings.setCustomAudioPath(filename);
-      this.persist();
     }
   }
 
   resetAudio(): void {
     this.appSettings.setCustomAudioPath(null);
-    this.persist();
-  }
-
-  private persist(): void {
-    const state = {
-      activeEntries: this.timerService.activeEntries(),
-      serverTimezone: this.appSettings.serverTimezone(),
-      displayTimezone: this.appSettings.displayTimezone(),
-      customAudioPath: this.appSettings.customAudioPath() ?? undefined,
-      locale: this.appSettings.locale(),
-    };
-    this.storage.writeState(state);
   }
 }

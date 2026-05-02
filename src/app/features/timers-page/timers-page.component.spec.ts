@@ -25,7 +25,8 @@ describe('TimersPageComponent', () => {
     });
 
     const timerSpy = jasmine.createSpyObj('MvpTimerService', ['addMvp', 'removeMvp', 'clearAll'], {
-      entries: signal([]).asReadonly(),
+      activeEntries: signal([]).asReadonly(),
+      currentTimeMs: signal(Date.now()),
       fiveMinWarning$: { subscribe: () => ({ unsubscribe: () => {} }) },
       respawnReady$: { subscribe: () => ({ unsubscribe: () => {} }) },
     });

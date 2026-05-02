@@ -1,9 +1,8 @@
 import { Injectable, signal, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { BossEntry } from '../models/boss.model';
-import { MvpTrackerEntry, MvpStatus, AppState } from '../models/mvp-tracker.model';
+import { MvpTrackerEntry, MvpStatus } from '../models/mvp-tracker.model';
 import { timeStringToUnix } from '../utils/time-utils';
-import { StorageService } from './storage.service';
 import { AppSettingsService } from './app-settings.service';
 
 const FIVE_MIN_SECS = 5 * 60;
@@ -24,24 +23,16 @@ export class MvpTimerService implements OnDestroy {
 
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  constructor(
-    private readonly storage: StorageService,
-    private readonly appSettings: AppSettingsService,
-  ) {
-    this.init();
-  }
+  constructor(private readonly appSettings: AppSettingsService) {}
 
-  async init(): Promise<void> {
-    const state = await this.storage.readState();
-    if (state?.activeEntries) {
-      const now = Date.now() / 1000;
-      const valid = state.activeEntries
-        // Discard entries past their max respawn window
-        .filter((e) => e.maxRespawnTime > now || e.status === 'ready')
-        // Ensure status field exists for state persisted before this field was added
-        .map((e) => ({ ...e, status: e.status ?? ('tracking' as MvpStatus) }));
-      this._entries.set(valid);
-    }
+  async init(entries: MvpTrackerEntry[]): Promise<void> {
+    const now = Date.now() / 1000;
+    const valid = entries
+      // Discard entries past their max respawn window
+      .filter((e: MvpTrackerEntry) => e.maxRespawnTime > now || e.status === 'ready')
+      // Ensure status field exists for state persisted before this field was added
+      .map((e: MvpTrackerEntry) => ({ ...e, status: e.status ?? ('tracking' as MvpStatus) }));
+    this._entries.set(valid);
     this.startLoop();
   }
 
@@ -66,25 +57,21 @@ export class MvpTimerService implements OnDestroy {
     };
 
     this._entries.update((prev) => [...prev, entry]);
-    this.persist();
   }
 
   /** Removes a tracker entry by ID (works for any status). */
   clearMvp(id: string): void {
     this._entries.update((prev) => prev.filter((e) => e.id !== id));
-    this.persist();
   }
 
   /** Removes all active tracker entries. */
   clearAll(): void {
     this._entries.set([]);
-    this.persist();
   }
 
   /** Removes all tracker entries whose boss matches the given boss ID. */
   clearByBossId(bossId: number): void {
     this._entries.update((prev) => prev.filter((e) => e.boss.ID !== bossId));
-    this.persist();
   }
 
   startLoop(): void {
@@ -130,19 +117,7 @@ export class MvpTimerService implements OnDestroy {
 
     if (changed) {
       this._entries.set(updated);
-      this.persist();
     }
-  }
-
-  private persist(): void {
-    const state: AppState = {
-      activeEntries: this._entries(),
-      serverTimezone: this.appSettings.serverTimezone(),
-      displayTimezone: this.appSettings.displayTimezone(),
-      customAudioPath: this.appSettings.customAudioPath() ?? undefined,
-      locale: this.appSettings.locale(),
-    };
-    this.storage.writeState(state);
   }
 
   ngOnDestroy(): void {

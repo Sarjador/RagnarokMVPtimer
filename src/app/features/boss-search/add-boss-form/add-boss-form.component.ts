@@ -2,6 +2,8 @@ import {
   Component, output, inject, ChangeDetectionStrategy,
 } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { BossCatalogService } from '../../../core/services/boss-catalog.service';
+import { LocaleService } from '../../../core/services/locale.service';
 
 /** Permite solo URLs http/https, rutas relativas del bundle y cadena vacia */
 function safeImageUrl(control: AbstractControl): ValidationErrors | null {
@@ -11,8 +13,6 @@ function safeImageUrl(control: AbstractControl): ValidationErrors | null {
   if (/^\.\//.test(val)) return null;
   return { unsafeUrl: true };
 }
-import { BossCatalogService } from '../../../core/services/boss-catalog.service';
-import { LocaleService } from '../../../core/services/locale.service';
 
 function maxGeMin(group: AbstractControl): ValidationErrors | null {
   const min = Number(group.get('minRespawnMin')?.value);

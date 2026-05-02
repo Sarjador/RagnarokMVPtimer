@@ -72,20 +72,30 @@ describe('NotificationService', () => {
     const svc = TestBed.inject(NotificationService);
     (svc as any).playAlertSound();
 
-    expect(audioSpy).toHaveBeenCalledWith(jasmine.stringMatching(/Murloc\.mp3/));
+    expect(audioSpy).toHaveBeenCalledWith(jasmine.stringMatching(/alerta\.mp3/));
   });
 
-  it('prepends custom path when customAudioPath is set', () => {
-    appSettingsSpy.customAudioPath.and.returnValue('C:\\sounds\\my-alert.mp3');
+  it('prepends custom path when customAudioPath is set', async () => {
+    appSettingsSpy.customAudioPath.and.returnValue('my-alert.mp3');
 
     const audioSpy = spyOn(window, 'Audio').and.returnValue({
       volume: 0,
       play: jasmine.createSpy('play').and.returnValue(Promise.resolve()),
     } as any);
 
-    const svc = TestBed.inject(NotificationService);
-    (svc as any).playAlertSound();
+    // Mock Electron API so getAudioPath returns a file URL
+    const originalApi = (window as any).electronAPI;
+    (window as any).electronAPI = {
+      getAudioPath: () => Promise.resolve('file:///home/user/my-alert.mp3'),
+    };
 
-    expect(audioSpy.calls.first().args[0]).toContain('C:/sounds/my-alert.mp3');
+    try {
+      const svc = TestBed.inject(NotificationService);
+      await (svc as any).playAlertSound();
+
+      expect(audioSpy.calls.first().args[0]).toContain('my-alert.mp3');
+    } finally {
+      (window as any).electronAPI = originalApi;
+    }
   });
 });

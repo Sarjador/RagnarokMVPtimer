@@ -18,8 +18,11 @@ export class BossCardComponent {
   readonly t = this.locale.t.bind(this.locale);
 
   readonly placeholderUrl = 'images/boss-placeholder.svg';
+  private errorHandled = false;
 
   onImgError(event: Event): void {
+    if (this.errorHandled) return;
+    this.errorHandled = true;
     const img = event.target as HTMLImageElement;
     img.src = this.placeholderUrl;
   }
